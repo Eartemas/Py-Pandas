@@ -3,7 +3,7 @@
 # Before running the code, ensure that you have the required permissions to access the data source, create the Excel file, and send emails using Outlook.
 
 import pandas as pd
-import win32com.client
+import win32com.client   # use pip install pywin32 to install pywin32
 
 # Step a: Import necessary libraries
 
