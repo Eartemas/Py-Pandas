@@ -3,7 +3,7 @@
 # Before running the code, ensure that you have the required permissions to access the data source, create the Excel file, and send emails using Outlook.
 
 import pandas as pd
-import win32com.client   # use pip install pywin32 to install pywin32
+import win32com.client
 
 # Step a: Import necessary libraries
 
@@ -11,13 +11,22 @@ import win32com.client   # use pip install pywin32 to install pywin32
 excel_file = 'sales_data.xlsx'  # Replace 'sales_data.xlsx' with your Excel file name
 sheet_name = 'Sheet1'  # Replace 'Sheet1' with the appropriate sheet name in your Excel file
 
-data = pd.read_excel(excel_file, sheet_name=sheet_name)
+data = pd.read_excel(excel_file, sheet_name=sheet_name, header=None)
 
-# Step c: Copy the desired section of the data
-start_row = 2  # Replace with the row number where your desired section starts
-end_row = 10  # Replace with the row number where your desired section ends
+# Step c: Find the current week's data
+current_week_data = []
+start_row = 0
+end_row = 0
 
-copied_data = data.iloc[start_row - 1: end_row]  # Select the desired rows (adjusting for 0-based indexing)
+for row in range(len(data)):
+    if data.iloc[row].str.startswith("Week").any():
+        start_row = row + 2  # Skip two rows for header and empty row
+    elif data.iloc[row].str.contains("WEEKLY TOTAL").any():
+        end_row = row + 1  # Include the row with 'WEEKLY TOTAL'
+        break
+
+if start_row != 0 and end_row != 0:
+    current_week_data = data.iloc[start_row:end_row]
 
 # Step d: Create Outlook email object
 outlook = win32com.client.Dispatch("Outlook.Application")
@@ -27,18 +36,17 @@ mail = outlook.CreateItem(0)  # 0 represents a new mail item
 mail.Subject = "Weekly Sales Report"
 mail.Body = "Please find the weekly sales report section attached."
 
-# Set recipients replace 'manager1@example.com', 'manager2@example.com', etc. 
-# with actual email addresses
+# Set recipients (replace 'manager1@example.com', 'manager2@example.com', etc. with actual email addresses)
 mail.To = "manager1@example.com; manager2@example.com"
 
-# Step f: Export copied data to Excel
-copied_data_excel_file = 'copied_sales_data.xlsx'  # Replace with your desired Excel file name for the copied data
-copied_data_sheet_name = 'Copied Sales Data'  # Replace with your desired sheet name for the copied data
+# Step f: Export current week's data to Excel
+current_week_excel_file = 'current_week_sales_data.xlsx'  # Replace with your desired Excel file name for the current week's data
+current_week_sheet_name = 'Current Week Sales Data'  # Replace with your desired sheet name for the current week's data
 
-copied_data.to_excel(copied_data_excel_file, sheet_name=copied_data_sheet_name, index=False)
+current_week_data.to_excel(current_week_excel_file, sheet_name=current_week_sheet_name, index=False, header=False)
 
 # Step g: Attach the Excel sheet to the email
-attachment = copied_data_excel_file
+attachment = current_week_excel_file
 mail.Attachments.Add(attachment)
 
 # Step h: Send the email
