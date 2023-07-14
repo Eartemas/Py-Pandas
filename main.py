@@ -50,4 +50,4 @@ attachment = current_week_excel_file
 mail.Attachments.Add(attachment)
 
 # Step h: Send the email
-mAil.Send()
+mAOl.Send()
