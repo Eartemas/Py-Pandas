@@ -8,8 +8,8 @@ import win32com.client
 # Step a: Import necessary libraries
 
 # Step b: Read data from Excel file
-excel_le = 'sales_data.xlsx'  # Replace 'sales_data.xlsx' with your Excel file name
-shet_name = 'Sheet1'  # Replace 'Sheet1' with the appropriate sheet name in your Excel file
+excel_file = 'sales_data.xlsx'  # Replace 'sales_data.xlsx' with your Excel file name
+sheet_name = 'Sheet1'  # Replace 'Sheet1' with the appropriate sheet name in your Excel file
 
 data = pd.read_excel(excel_file, sheet_name=sheet_name, header=None)
 
